@@ -1,6 +1,6 @@
 function startClock() {
   const date = new Date();
-  const hours = date.getHours();
+  const hours = date.getHours() % 12 || 12;
   const minutes = date.getMinutes();
   const seconds = date.getSeconds();
   let ampm = "AM";
@@ -8,8 +8,7 @@ function startClock() {
   let singledigitmin = 0;
 
   function AMPM() {
-    if (hours > 12) {
-      hours = hours - 12;
+    if (date.getHours > 12) {
       ampm = "PM";
     }
     return ampm;
@@ -40,25 +39,29 @@ function getDate() {
   const date = new Date();
   const dayOfWeek = date.toLocaleString("en-US", { weekday: "long" });
   const month = date.toLocaleString("en-US", { month: "long" });
-  const dayofmonth = date.getDate();
+  const dayOfMonth = date.getDate();
   const year = date.getFullYear();
-  let suf = "st";
 
   function suffix() {
-    if (dayofmonth === 2) {
-      suf = "nd";
-    }
-    if (dayofmonth === 3) {
-      suf = "rd";
-    } else {
-      suf = "th";
-    }
-    return suf;
+    return dayOfMonth === 1 || dayOfMonth === 21 || dayOfMonth === 31
+      ? "st"
+      : dayOfMonth === 2 || dayOfMonth === 22
+      ? "nd"
+      : dayOfMonth === 3 || dayOfMonth === 23
+      ? "rd"
+      : "th";
   }
 
   const DateID = document.getElementById("date");
 
-  const currentDate = `${dayOfWeek}, ${month} ${dayofmonth}${suffix()} ${year}`;
+  const currentDate = `${dayOfWeek}, ${month} ${dayOfMonth}${suffix()} ${year}`;
 
   DateID.textContent = currentDate;
 }
+
+getDate();
+startClock();
+setInterval(() => {
+  startClock();
+  getDate();
+}, 1000);
